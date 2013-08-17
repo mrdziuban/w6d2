@@ -58,7 +58,7 @@ Game.prototype.randomAsteroid = function(){
       x = Math.floor(Math.random() * (50));
     }
     else{
-      x = Math.floor(Math.random() * (this.xDim-(this.xDim-50)) + (this.xDim-50));
+      x = Math.floor(Math.random() * (this.xDim - (this.xDim - 50)) + (this.xDim - 50));
     }
 
     y = Math.floor(Math.random() * (this.yDim));
@@ -69,7 +69,7 @@ Game.prototype.randomAsteroid = function(){
       y = Math.floor(Math.random() * (50));
     }
     else{
-      y = Math.floor(Math.random() * (this.yDim-(this.yDim-50)) + (this.yDim-50));
+      y = Math.floor(Math.random() * (this.yDim - (this.yDim - 50)) + (this.yDim - 50));
     }
 
     x = Math.floor(Math.random() * (this.xDim));
@@ -85,16 +85,16 @@ Game.prototype.draw = function(img, img2, img3){
   that.ctx.drawImage(img, 0, 0, that.xDim, that.yDim);
 
   this.ctx.fillStyle = "white";
-  this.ctx.font = "italic "+20+"pt Arial ";
+  this.ctx.font = "italic " + 20 + "pt Arial ";
   this.ctx.fillText("Score: " + that.score, that.xDim - 200, 30);
 
-  this.asteroids.forEach(function(el, i, arr){
+  this.asteroids.forEach(function(el){
     el.draw(that.ctx, img2);
   });
 
   this.ship.draw(that.ctx, img3);
 
-  this.bullets.forEach(function(el, i, arr){
+  this.bullets.forEach(function(el){
     el.draw(that.ctx);
   });
 };
@@ -115,7 +115,7 @@ Game.prototype.update = function(){
     that.ship.y = that.yDim;
   }
 
-  that.asteroids.forEach(function(el, i, arr){
+  that.asteroids.forEach(function(el, i){
     el.update(el.velocity);
     if (el.offScreen(that)){
       that.asteroids.splice(i, 1);
@@ -126,18 +126,16 @@ Game.prototype.update = function(){
   if (that.ship.isHit(that.asteroids)){
     var img4 = new Image();
     img4.src = 'xplosion.png';
-    // img4.onload = function(){
-//       that.ctx.drawImage(img4, that.ship.x - that.ship.radius,
-//                          that.ship.y - that.ship.radius,
-//                          that.ship.radius * 2,
-//                          that.ship.radius * 2);
-//     }
 
     that.drawExplosion(img4);
 
     window.clearInterval(that.timer);
+    var playAgain = prompt("Play again? (y/n)");
+    if (playAgain === "y") {
+      new Game(($(window).width() - 10), ($(window).height() - 20), that.ctx).start();
+    }
   }
-  that.bullets.forEach(function(el, i, arr){
+  that.bullets.forEach(function(el, i){
     if (el.hitAsteroid(that.asteroids)[0]){
       var img5 = new Image();
       img5.src = 'dead_asteroid.png';
@@ -179,8 +177,8 @@ Game.prototype.start = function(){
   var img2 = new Image();
   img2.src = 'asteroid.png';
 
-  this.asteroids.forEach(function(el, i, arr){
-    img2.onload = function(){
+  this.asteroids.forEach(function(el){
+    img2.onload = function() {
       that.ctx.drawImage(img2, el.x - el.radius,
                          el.y - el.radius,
                          el.radius * 2,
@@ -240,7 +238,10 @@ Game.prototype.start = function(){
     that.update();
     if (that.asteroids.length === 0){
       window.clearInterval(that.timer);
-      alert("kill yourself");
+      var playAgain = prompt("Play again? (y/n)");
+      if (playAgain === "y") {
+        new Game(($(window).width() - 10), ($(window).height() - 20), that.ctx).start();
+      }
     }
   }, 31.25);
 };
@@ -263,9 +264,9 @@ Ship.prototype.draw = function(ctx, img3){
 Ship.prototype.isHit = function(asteroids){
   var that = this;
   var hit = false;
-  asteroids.forEach(function(el, i, arr){
+  asteroids.forEach(function(el){
     if (Math.sqrt(Math.pow(el.x - that.x, 2) +
-        Math.pow(el.y - that.y, 2)) < el.radius/1.25 + that.radius){
+        Math.pow(el.y - that.y, 2)) < el.radius/1.25 + that.radius) {
       hit = true;
     }
   });
@@ -322,7 +323,7 @@ Bullet.prototype.update = function(obj){
 Bullet.prototype.hitAsteroid = function(asteroids){
   var that = this;
   var returnArr = [false];
-  asteroids.forEach(function(el, i, arr){
+  asteroids.forEach(function(el, i){
     if (Math.sqrt(Math.pow(el.x-that.x, 2) +
         Math.pow(el.y-that.y, 2)) < el.radius + that.radius){
       returnArr[0] = true;
